@@ -69,16 +69,36 @@ def download_file(url):
 def build_url_list(url):
 	print "Spidering: ", url, url.split('/')
 	outputfile = url.split('/')[-1]+".txt"
-	cmd = "wget --spider --force-html -r -l3 "+ url +" 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\)$' > " + outputfile
+	cmd = "wget --spider --force-html -r -l8 "+ url +" 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\)$' > " + outputfile
 	print cmd
 	os.system(cmd)
+	print "DONE"
 	
+
+def download_parallel(url_list, folder_name):
+	print "Downlaoding in parallel to", DOWNLOAD_DIR+folder_name
+	try:
+		os.makedirs(DOWNLOAD_DIR+folder_name)
+	except:
+		print "download dir exists. great"
+
+	with open(url_list, 'r') as file:
+		urls = file.readlines()
+		print str(len(urls))+ "URLS to download"
+
+	cmd = "aria2c -d "+DOWNLOAD_DIR+folder_name+" -i "+url_list+" -l aria2c.log -c -x 4 --retry-wait=5 --dry-run=false "
+	print cmd
+	os.system(cmd)
 
 
 
 # download_file("https://edx.netl.doe.gov/dataset/natcarb-alldata-v1502/resource_download/f7b936b3-b250-47e4-8475-e1c8474d9e22")
 
-build_url_list("ftp://aftp.cmdl.noaa.gov")
+# build_url_list("ftp://aftp.cmdl.noaa.gov/products")
+download_parallel("products.txt", "aftp.cmdl.noaa.gov")
+
+
+
 
 # https://www.gnu.org/software/wget/manual/html_node/Very-Advanced-Usage.html
 # cd /path/to/download/location;wget -rpk www.epa.gov
