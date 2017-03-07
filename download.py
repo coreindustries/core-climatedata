@@ -42,6 +42,7 @@ data_okfn_org = ["https://raw.githubusercontent.com/datasets/co2-ppm/master/data
 "https://raw.githubusercontent.com/datasets/co2-ppm/master/data/co2-annmean-gl.csv",
 "https://raw.githubusercontent.com/datasets/co2-ppm/master/data/co2-gr-gl.csv"]
 
+energy_gov = ["https://www.energy.gov/sites/prod/files/2017/03/f34/doe-pdl-3-3-2017.json"]
 
 def download_file(url):
 	local_filename = url.split('/')[-1]
@@ -65,8 +66,38 @@ def download_file(url):
 	return local_filename
 
 
+def build_url_list(url):
+	print "Spidering: ", url, url.split('/')
+	outputfile = url.split('/')[-1]+".txt"
+	cmd = "wget --spider --force-html -r -l3 "+ url +" 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\)$' > " + outputfile
+	print cmd
+	os.system(cmd)
+	
 
-download_file("https://edx.netl.doe.gov/dataset/natcarb-alldata-v1502/resource_download/f7b936b3-b250-47e4-8475-e1c8474d9e22")
 
 
+# download_file("https://edx.netl.doe.gov/dataset/natcarb-alldata-v1502/resource_download/f7b936b3-b250-47e4-8475-e1c8474d9e22")
+
+build_url_list("ftp://aftp.cmdl.noaa.gov")
+
+# https://www.gnu.org/software/wget/manual/html_node/Very-Advanced-Usage.html
 # cd /path/to/download/location;wget -rpk www.epa.gov
+
+# http://cdiac.esd.ornl.gov/
+# mkdir -p /mnt/raid/projects/climate/cdiac.esd.ornl.gov
+# wget -v --mirror --progress=dot --random-wait –p --adjust-extension –-convert-links –P /mnt/raid/projects/climate/cdiac.esd.ornl.gov  http://cdiac.esd.ornl.gov/
+
+# mkdir -p /mnt/raid/projects/climate/energy.gov
+# https://www.energy.gov
+# wget -v --mirror --progress=dot --random-wait –p --adjust-extension –-convert-links –P /mnt/raid/projects/climate/energy.gov  https://www.energy.gov
+
+# https://www.esrl.noaa.gov
+# mkdir -p /mnt/raid/projects/climate/www.esrl.noaa.gov
+# wget -v --mirror --progress=dot --random-wait –p --adjust-extension –-convert-links –P /mnt/raid/projects/climate/www.esrl.noaa.gov https://www.esrl.noaa.gov
+
+# ftp://aftp.cmdl.noaa.gov/
+# mkdir -p /mnt/raid/projects/climate/aftp.cmdl.noaa.gov
+# wget -v --mirror --progress=dot --random-wait –p --adjust-extension –-convert-links –P /mnt/raid/projects/climate/aftp.cmdl.noaa.gov ftp://aftp.cmdl.noaa.gov/
+
+
+# wget --spider --force-html -r -l2 http://www.epa.gov 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\)$' > urls.txt
